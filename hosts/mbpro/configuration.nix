@@ -148,6 +148,9 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
 
+  programs._1password.enable = true;
+  programs._1password-gui.enable = true;
+
   home-manager.users.stafford = {
     /* The home.stateVersion option does not have a default and must be set */
     home.stateVersion = "23.11";
