@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
-
+let
+  nurpkgs = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") { inherit pkgs; };
+  onePassPath = "~/.1password/agent.sock";
+in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -7,7 +10,6 @@
   home.homeDirectory = "/home/stafford";
 
   nixpkgs.config.allowUnfree = true;
-
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -18,9 +20,14 @@
   # release notes.
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
+  dconf = {
+    enable = true;
+    settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+  };
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -37,10 +44,11 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    pkgs.signal-desktop
-    pkgs.nixpkgs-fmt
-    pkgs._1password
-    pkgs._1password-gui
+    signal-desktop
+    nixpkgs-fmt
+    gnome-extension-manager
+    gnomeExtensions.dash-to-dock
+    gnomeExtensions.random-wallpaper
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -80,21 +88,24 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  programs.firefox = {
-    enable = true;
-    package = pkgs.firefox.override
-      {
-        nativeMessagingHosts = [
-          pkgs.gnome-browser-connector
-        ];
+  programs.firefox =
+    {
+      enable = true;
+      package = pkgs.firefox.override
+        {
+          nativeMessagingHosts = [
+            pkgs.gnome-browser-connector
+          ];
+        };
+      profiles = {
+        stafford = {
+          extensions = with nurpkgs.repos.rycee.firefox-addons; [
+            ublock-origin
+            onepassword-password-manager
+          ];
+        };
       };
-    # profiles = {
-    #   stafford = {
-    #     id = 0;
-    #     name = "stafford";
-    #   };
-    # };
-  };
+    };
 
   programs.vscode = {
     enable = true;
@@ -105,6 +116,7 @@
       "editor.minimap.enabled" = false;
       "security.workspace.trust.untrustedFiles" = "open";
       "git.enableSmartCommit" = true;
+      "git.confirmSync" = false;
     };
     keybindings = [
       {
@@ -117,10 +129,68 @@
         command = "workbench.action.navigateBack";
         when = "canNavigateBack";
       }
+      {
+        key = "ctrl+shift+s";
+        command = "-workbench.action.files.saveLocalFile";
+        when = "remoteFileDialogVisible";
+      }
+      {
+        key = "ctrl+shift+s";
+        command = "workbench.action.files.saveAll";
+      }
+      {
+        key = "ctrl+shift+alt+up";
+        command = "editor.action.insertCursorAbove";
+        when = "editorTextFocus";
+      }
+      {
+        key = "shift+alt+up";
+        command = "-editor.action.insertCursorAbove";
+        when = "editorTextFocus";
+      }
+      {
+        key = "shift+alt+up";
+        command = "editor.action.copyLinesUpAction";
+        when = "editorTextFocus && !editorReadonly";
+      }
+      {
+        key = "ctrl+shift+alt+up";
+        command = "-editor.action.copyLinesUpAction";
+        when = "editorTextFocus && !editorReadonly";
+      }
+      {
+        key = "ctrl+shift+alt+down";
+        command = "editor.action.insertCursorBelow";
+        when = "editorTextFocus";
+      }
+      {
+        key = "shift+alt+down";
+        command = "-editor.action.insertCursorBelow";
+        when = "editorTextFocus";
+      }
+      {
+        key = "shift+alt+down";
+        command = "editor.action.copyLinesDownAction";
+        when = "editorTextFocus && !editorReadonly";
+      }
+      {
+        key = "ctrl+shift+alt+down";
+        command = "-editor.action.copyLinesDownAction";
+        when = "editorTextFocus && !editorReadonly";
+      }
     ];
   };
 
   programs.gh.enable = true;
+
+  programs.bash = {
+    enable = true;
+    bashrcExtra = ''
+      source /home/stafford/.config/op/plugins.sh
+      cd ~/git
+      export SSH_AUTH_SOCK=~/.1password/agent.sock
+    '';
+  };
 
   programs.git = {
     enable = true;
@@ -131,5 +201,9 @@
         defaultBranch = "main";
       };
     };
+  };
+
+  programs.ssh = {
+    enable = true;
   };
 }

@@ -51,7 +51,55 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+    extraGSettingsOverrides = ''
+      [org.gnome.desktop.interface]
+      overlay-scrolling=false
+
+      [org.gnome.desktop.wm.keybindings]
+      move-to-workspace-1=[]
+      move-to-workspace-2=[]
+      move-to-workspace-3=[]
+      move-to-workspace-4=[]
+      move-to-workspace-5=[]
+      move-to-workspace-6=[]
+      move-to-workspace-7=[]
+      move-to-workspace-8=[]
+      move-to-workspace-9=[]
+      move-to-workspace-10=[]
+      move-to-workspace-11=[]
+      move-to-workspace-12=[]
+      move-to-workspace-left=[]
+      move-to-workspace-right=[]
+      move-to-workspace-up=[]
+      move-to-workspace-down=[]
+      move-to-workspace-last=[]
+      switch-to-workspace-1=[]
+      switch-to-workspace-2=[]
+      switch-to-workspace-3=[]
+      switch-to-workspace-4=[]
+      switch-to-workspace-5=[]
+      switch-to-workspace-6=[]
+      switch-to-workspace-7=[]
+      switch-to-workspace-8=[]
+      switch-to-workspace-9=[]
+      switch-to-workspace-10=[]
+      switch-to-workspace-11=[]
+      switch-to-workspace-12=[]
+      switch-to-workspace-left=[]
+      switch-to-workspace-right=[]
+      switch-to-workspace-up=[]
+      switch-to-workspace-down=[]
+      switch-to-workspace-last=[]
+
+      [org.gnome.desktop.wm.preferences]
+      num-workspaces=1
+
+      [org.gnome.shell.window-switcher]
+      current-workspace-only=true
+    '';
+  };
 
   # Configure keymap in X11
   services.xserver = {
@@ -106,9 +154,10 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-
-  ];
+  environment.systemPackages = with pkgs;
+    [
+      gnome.gnome-tweaks
+    ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -136,6 +185,14 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
+
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    # Certain features, including CLI integration and system authentication support,
+    # require enabling PolKit integration on some desktop environments (e.g. Plasma).
+    polkitPolicyOwners = [ "stafford" ];
+  };
 }
 
 

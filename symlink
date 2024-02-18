@@ -10,5 +10,5 @@ if [[ ! -e "/home/stafford/git/nixos-config/hosts/$HOST/configuration.nix" ]] ||
 	exit 1
 fi
 
-ln -f "/home/stafford/git/nixos-config/hosts/$HOST/configuration.nix" .
+ln -f "/home/stafford/git/nixos-config/hosts/$HOST/configuration.nix"
 ln -f "/home/stafford/git/nixos-config/hosts/$HOST/hardware-configuration.nix" .
