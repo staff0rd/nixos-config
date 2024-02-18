@@ -3,15 +3,11 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-let
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-in
 {
   imports =
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      (import "${home-manager}/nixos")
     ];
 
   # Bootloader.
@@ -97,33 +93,21 @@ in
     description = "Stafford Williams";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-      firefox
-      signal-desktop
     ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    nixpkgs-fmt
-    (vscode-with-extensions.override {
-      vscodeExtensions = with vscode-extensions; [
-        vscode-extensions.jnoortheen.nix-ide
-        ms-azuretools.vscode-docker
-        ms-vscode-remote.remote-ssh
-      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-        {
 
-          name = "remote-ssh-edit";
-          publisher = "ms-vscode-remote";
-          version = "0.0.1";
-          sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
-        }
-      ];
-    })
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -152,28 +136,6 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
-
-  programs._1password.enable = true;
-  programs._1password-gui.enable = true;
-
-  home-manager.users.stafford = {
-    /* The home.stateVersion option does not have a default and must be set */
-    home.stateVersion = "23.11";
-    /* Here goes the rest of your home-manager config, e.g. home.packages = [ pkgs.foo ]; */
-
-    programs.gh.enable = true;
-
-    programs.git = {
-      enable = true;
-      userName = "Stafford Williams";
-      userEmail = "stafford.williams@gmail.com";
-      extraConfig = {
-        init = {
-          defaultBranch = "main";
-        };
-      };
-    };
-  };
 }
 
 
