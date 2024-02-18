@@ -181,8 +181,6 @@ in
     ];
   };
 
-  programs.gh.enable = true;
-
   programs.bash = {
     enable = true;
     bashrcExtra = ''
