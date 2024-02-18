@@ -85,6 +85,9 @@ in
     #media-session.enable = true;
   };
 
+  virtualisation.docker.enable = true;
+  users.extraGroups.docker.members = [ "stafford" ];
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
