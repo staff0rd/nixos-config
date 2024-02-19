@@ -10,4 +10,4 @@ if [[ ! -e "/home/stafford/git/nixos-config/hosts/$HOST/configuration.nix" ]]; t
 	exit 1
 fi
 
-ln -f "/home/stafford/git/nixos-config/hosts/$HOST/configuration.nix"
+ln -f "/home/stafford/git/nixos-config/hosts/$HOST/configuration.nix" .
