@@ -23,7 +23,18 @@ in
   dconf = {
     enable = true;
     settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+    settings."org/gnome/shell" = {
+      favorite-apps = [ "1password.desktop" "org.gnome.Terminal.desktop" "firefox.desktop" ];
+    };
+    settings."org/gnome/shell/keybindings" = {
+      switch-to-application-1 = [ "<super>1" ];
+      switch-to-application-2 = [ "<super>2" ];
+      switch-to-application-3 = [ "<super>3" ];
+      switch-to-application-4 = [ "<super>4" ];
+    };
   };
+
+
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
