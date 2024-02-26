@@ -49,6 +49,7 @@ in
     gnome-extension-manager
     gnomeExtensions.dash-to-dock
     gnomeExtensions.random-wallpaper
+    vlc
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
