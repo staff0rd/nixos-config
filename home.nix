@@ -129,6 +129,7 @@ in
       "security.workspace.trust.untrustedFiles" = "open";
       "git.enableSmartCommit" = true;
       "git.confirmSync" = false;
+      "debug.javascript.autoAttachFilter" = "always";
     };
     keybindings = [
       {
@@ -209,6 +210,9 @@ in
     extraConfig = {
       init = {
         defaultBranch = "main";
+      };
+      push = {
+        autoSetupRemote = true;
       };
     };
   };
